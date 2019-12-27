@@ -1,0 +1,23 @@
+@import"~bootstrap/scss/functions";
+@import"./helpers/_variables";
+@import "~bootstrap/scss/bootstrap";
+
+// utilities
+@import"./assets/utilities/_color";
+@import"./assets/utilities/_img";
+@import"./assets/utilities/_font";
+@import"./assets/utilities/_btn";
+@import"./assets/utilities/_border";
+@import"./assets/utilities/_table";
+
+// layout
+@import"./assets/layout/_footer";
+@import"./assets/layout/_navbar";
+
+// pages
+@import"./assets/pages/_home";
+@import"./assets/pages/_products";
+@import"./assets/pages/_signin";
+@import"./assets/pages/_Dashboard";
+
+

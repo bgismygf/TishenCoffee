@@ -1,0 +1,13 @@
+.products-img-h {
+    height: 250px;
+}
+
+.products-favorite {
+    position: absolute;
+    top: 12px;
+    right: 30px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color:$bg-main;
+}
