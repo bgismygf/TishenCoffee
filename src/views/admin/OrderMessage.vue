@@ -70,13 +70,15 @@ export default {
   methods: {
     getOrder(page = 1) {
       const vm = this;
+      let dataOrder = {};
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/orders?page=${page}`;
       this.isLoading = true;
       this.$http.get(api).then((response) => {
         vm.isLoading = false;
-        vm.orders = response.data.orders;
+        dataOrder = response.data.orders;
         vm.pagination = response.data.pagination;
-        console.log(response.data.orders);
+        console.log(JSON.stringify(dataOrder));
+        vm.orders = JSON.stringify(dataOrder);
       });
     },
   },
