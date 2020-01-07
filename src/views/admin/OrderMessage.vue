@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in orders" :key="item.id">
+                <tr v-for="(item, index) in orders" :key="item.id" v-if="index > 0">
                     <td>{{ item.create_at | date }}</td>
                     <td>
                         <ul class="list-unstyled">
@@ -77,8 +77,7 @@ export default {
         vm.isLoading = false;
         dataOrder = response.data.orders;
         vm.pagination = response.data.pagination;
-        console.log(JSON.stringify(dataOrder));
-        vm.orders = JSON.stringify(dataOrder);
+        vm.orders = JSON.parse(JSON.stringify(dataOrder));
       });
     },
   },

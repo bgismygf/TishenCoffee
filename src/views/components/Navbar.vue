@@ -20,8 +20,8 @@
         :class="{ 'active' : $route.name === 'Home' }">首頁</router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link nav_item_style my-1 my-lg-0" to="/products"
-          :class="{ 'active' : $route.name === 'Products' }">菜單</router-link>
+        <router-link class="nav-link nav_item_style my-1 my-lg-0" to="/product_list"
+          :class="{ 'active' : $route.name === 'product_list' }">菜單</router-link>
       </li>
     </ul>
     <ul class="navbar-nav text-center text-lg-left">
@@ -33,38 +33,36 @@
         </li>
       <li class="nav-item mr-lg-4">
             <div class="dropdown">
-              <a class="nav-link nav_item_style my-1 my-lg-0" id="dropdownMenu2"
+              <a class="nav-link nav_item_style my-1 my-lg-0" id="favorite"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="nav_badge_block">
                   <i class="fas fa-heart fa-lg"></i>
-                  <span class="badge badge-pill badge-danger nav_badge">2</span>
+                  <span class="badge badge-pill badge-danger nav_badge">
+                    {{favoriteData.length}}
+                    </span>
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-right nav_favorite_block_xs-md"
-              aria-labelledby="dropdownMenu2" style="min-width:290px;">
+                aria-labelledby="favorite" style="min-width:290px;">
                 <div class="px-3 py-2">
                   <h5 class="text-center">我的最愛</h5>
                   <table class="table">
-                  <tr>
+                  <tr v-for="item in favoriteData" :key="item.id">
                     <td class="text-center">
                       <a class="text-danger" href="#">
-                            <i class="fas fa-times"></i>
+                        <i class="fas fa-times"
+                          @click.prevent="removeFavorite(item)"></i>
                       </a>
                     </td>
-                    <td>招牌漢堡餐</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">
-                      <a class="text-danger" href="#">
-                            <i class="fas fa-times"></i>
-                      </a>
-                    </td>
-                    <td>泰式雞肉堡</td>
+                    <td>{{item.title}}</td>
                   </tr>
               </table>
-                    <a href="#" class="btn btn-danger btn-block">
+                    <a href="#" class="btn btn-danger btn-block"
+                      v-if="favoriteData.length !== 0"
+                      @click.prevent="removeAllFavorite">
                     全部刪除
-                  </a>
+                    </a>
+                    <h6 class="text-center text-danger" v-else>目前是空的</h6>
                 </div>
             </div>
           </div>
@@ -77,8 +75,9 @@
           >
             <div class="nav_badge_block">
               <i class="fas fa-shopping-cart fa-lg"></i>
-            <span class="badge badge-pill badge-danger nav_badge"
-              v-if="cart.carts">{{ cart.carts.length }}</span>
+            <span class="badge badge-pill badge-danger nav_badge">
+              {{ cartLength }}
+              </span>
             </div>
           </a>
           <div class="dropdown-menu dropdown-menu-right"
@@ -99,9 +98,11 @@
                   </tr>
               </table>
                 <router-link
-                  to="/create_order" class="btn btn-danger btn-block">
+                  to="/create_order" class="btn btn-danger btn-block"
+                    v-if="cartLength !== 0">
                 結帳去
               </router-link>
+              <h6 class="text-center text-danger" v-else>購物車是空的</h6>
             </div>
         </div>
       </div>
@@ -119,6 +120,11 @@ export default {
     return {
       signinStatus: false,
       cart: {},
+      favoriteData: [],
+      cartLength: 0,
+      status: {
+        numLoading: false,
+      },
     };
   },
   methods: {
@@ -147,9 +153,11 @@ export default {
     getCart() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
+      this.status.numLoading = true;
       this.$http.get(api).then((response) => {
+        vm.status.numLoading = false;
         vm.cart = response.data.data;
-        console.log(response);
+        vm.cartLength = vm.cart.carts.length;
       });
     },
     removeCartItem(id) {
@@ -157,14 +165,39 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart/${id}`;
       this.$http.delete(api).then(() => {
         vm.getCart();
+        vm.$bus.$emit('removeCartItem');
+        vm.$bus.$emit('message:push', '已刪除', 'danger');
       });
+    },
+    getfavoriteData() {
+      this.favoriteData = JSON.parse(localStorage.getItem('favoriteData')) || [];
+    },
+    removeFavorite(item) {
+      const vm = this;
+      const num = this.favoriteData.findIndex((el) => {
+        const result = el.id === item.id;
+        return result;
+      });
+      this.favoriteData.splice(num, 1);
+      localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
+      this.getfavoriteData();
+      this.$bus.$emit('removeFavorite', item);
+    },
+    removeAllFavorite() {
+      const vm = this;
+      this.favoriteData = [];
+      localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
+      this.$bus.$emit('removeAllFavorite', this.favoriteData);
+      vm.$bus.$emit('message:push', '全部已刪除', 'danger');
     },
   },
   created() {
     const vm = this;
     this.signinIcon();
     this.getCart();
+    this.getfavoriteData();
     this.$bus.$on('getCart', vm.getCart);
+    this.$bus.$on('favoriteData', vm.getfavoriteData);
   },
 };
 </script>

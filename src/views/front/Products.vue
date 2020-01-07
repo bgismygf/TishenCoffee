@@ -1,5 +1,6 @@
 <template>
   <div>
+    <loading :active.sync="isLoading"></loading>
       <div class="container mt-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb text-main bg-transparent
@@ -27,8 +28,16 @@
                      :style="{backgroundImage: `url(${item.imageUrl})`}">
                 </div>
                   <div class="products-favorite">
-                    <a href="#" class="text-danger">
-                      <i class="far fa-heart fa-lg"></i>
+                    <a href="#">
+                      <i class="fas fa-heart fa-lg text-danger"
+                        @click.prevent="removeFavorite(item)"
+                        v-if="getFilteredFavorite(item)">
+                        </i>
+
+                      <i class="far fa-heart fa-lg text-danger"
+                        @click.prevent="addFavorite(item)"
+                        v-else>
+                        </i>
                     </a>
                   </div>
                   <div class="text-white bg-main border-radius-5 p-3 mt-2">
@@ -62,6 +71,9 @@ export default {
   data() {
     return {
       select: '全部菜單',
+      isLoading: false,
+      favoriteLength: '',
+      favoriteData: [],
       products: [],
       pagination: {},
       cart: {},
@@ -77,13 +89,16 @@ export default {
   methods: {
     getItem(title) {
       this.select = title;
+      if (this.$route.query.category) {
+        this.$router.push('/product_list');
+      }
     },
     getProducts() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/products/all`;
-      // vm.isLoading = true;
+      this.isLoading = true;
       this.$http.get(api).then((response) => {
-        // vm.isLoading = false;
+        vm.isLoading = false;
         vm.products = response.data.products;
         vm.pagination = response.data.pagination;
       });
@@ -97,6 +112,7 @@ export default {
       };
       this.$http.post(api, { data: cart }).then(() => {
         vm.$bus.$emit('getCart');
+        vm.$bus.$emit('message:push', '已加入購物車', 'success');
       });
     },
     getCart() {
@@ -107,8 +123,52 @@ export default {
       });
     },
     moreContent(productId) {
-      this.$router.push(`/more_content/${productId}`);
+      this.$router.push(`/product_list/${productId}`);
     },
+    getFavoriteData() {
+      this.favoriteData = JSON.parse(localStorage.getItem('favoriteData')) || [];
+    },
+    addFavorite(item) {
+      const vm = this;
+      const favoriteItem = {
+        id: item.id,
+        title: item.title,
+      };
+      this.favoriteData.push(favoriteItem);
+      localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
+      this.$bus.$emit('favoriteData');
+      vm.$bus.$emit('message:push', '已加入我的最愛', 'success');
+    },
+    getFilteredFavorite(item) {
+      return this.favoriteData.some((el) => {
+        const result = item.id === el.id;
+        return result;
+      });
+    },
+    removeFavorite(item) {
+      const vm = this;
+      const num = this.favoriteData.findIndex((el) => {
+        const result = el.id === item.id;
+        return result;
+      });
+      this.favoriteData.splice(num, 1);
+      localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
+      this.$bus.$emit('favoriteData');
+      vm.$bus.$emit('message:push', '已刪除我的最愛', 'danger');
+    },
+    getCategory() {
+      if (this.$route.query.category) {
+        this.select = this.$route.query.category;
+      }
+    },
+  },
+  mounted() {
+    const vm = this;
+    this.$bus.$on('removeFavorite', this.removeFavorite);
+    this.$bus.$on('removeAllFavorite', (data) => {
+      this.favoriteData = data;
+      localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
+    });
   },
   computed: {
     filteredData() {
@@ -122,6 +182,8 @@ export default {
   created() {
     this.getProducts();
     this.getCart();
+    this.getFavoriteData();
+    this.getCategory();
   },
 };
 </script>

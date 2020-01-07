@@ -5,7 +5,7 @@
                 <div class="text-center">
                     <h1 class="mb-5" style="margin-top: 165px;">INSTANT. ENJOY. YUMMY</h1>
                         <form class="mb-5">
-                            <router-link to="/products" href="#"
+                            <router-link to="/product_list" href="#"
                                          class="btn btn-danger">開始訂購
                             </router-link>
                         </form>
@@ -88,7 +88,7 @@
                         </div>
                         <div>
                             <h4>增加空閒時間</h4>
-                            <p>每日 100 元起，就能省下 30 ~ 60 分鐘的時間用來睡眠、吃早餐等。</p>
+                            <p>每日 100 元起，就能省下 30 ~ 60 分鐘的時間，輕鬆迎來早晨時光。</p>
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                         </div>
                         <div>
                             <h4>專業配送</h4>
-                            <p>只要一通電話，每日清晨 7:00 前將新鮮、營養、健康送到家，
+                            <p>只要一通電話，每日清晨 7:00 前將新鮮、營養、美味送到家，
                                口味和配送日期任您調整。
                             </p>
                         </div>
@@ -308,33 +308,42 @@
                 </div>
         <!-- 訂閱 -->
     <h3 class="text-center mb-4 border-top border-white pt-3 mt-3">即將出新菜單，趕快來訂閱吧 !</h3>
-    <form>
-            <div class="form-row align-items-center justify-content-center">
-                <div class="col-12 col-md-8 mr-md-1 mb-4 mb-md-0">
-                    <label class="sr-only" for="inlineFormInputGroup">Email</label>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text bg-white px-4">Email</div>
-                        </div>
-                        <input type="email" class="form-control py-2" id="inlineFormInputGroup"
-                            placeholder="輸入 Email ，按下訂閱獲取新菜單">
-                        <div class="input-group-append">
-                            <button class="btn btn-danger"
-                                    type="button"
-                                    id="button-addon2">
-                                    訂閱
-                            </button>
-                        </div>
+        <div class="form-row align-items-center justify-content-center">
+            <div class="col-12 col-md-8 mr-md-1 mb-4 mb-md-0">
+                <label class="sr-only" for="email">Email</label>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text bg-white px-4"
+                        :class="{'border-right-0 border-danger': errors.first('email')}"
+                        >Email
+                    </div>
+                    </div>
+                    <input type="email" name="email" class="form-control py-2"
+                        id="email"
+                        placeholder="輸入 Email ，按下訂閱獲取新菜單"
+                        v-model="subscriptionInput"
+                        v-validate="'required|email'"
+                        :class="{'is-invalid': errors.first('email')}">
+                    <div class="input-group-append">
+                        <button class="btn btn-danger"
+                                type="button"
+                                id="button-addon2"
+                                @click="subscription">
+                                訂閱
+                        </button>
                     </div>
                 </div>
-                <div class="col-12 col-md-auto">
-                    <router-link to="/products" href="#" class="btn btn-danger btn-block mb-2 px-4">
-                        前往菜單
-                        <i class="fas fa-arrow-right"></i>
-                    </router-link>
-                </div>
             </div>
-    </form>
+            <div class="col-12 col-md-auto">
+                <router-link to="/product_list" href="#" class="btn btn-danger btn-block mb-2 px-4">
+                    前往菜單
+                    <i class="fas fa-arrow-right"></i>
+                </router-link>
+            </div>
+            <span class="text-danger" v-if="errors.has('email')">
+                {{errors.first('email')}}
+            </span>
+        </div>
     </div>
     </section>
   </div>
@@ -344,10 +353,25 @@
 import $ from 'jquery';
 
 export default {
+  data() {
+    return {
+      subscriptionInput: '',
+    };
+  },
   methods: {
     slide() {
       const target = $('.jq_section1').offset().top;
       $('html,body').animate({ scrollTop: target }, 1000);
+    },
+    subscription() {
+      const vm = this;
+      this.$validator.validate().then((valid) => {
+        if (!valid) {
+          vm.$bus.$emit('message:push', '請輸入 Email', 'danger');
+        } else {
+          vm.$bus.$emit('message:push', '訂閱成功', 'success');
+        }
+      });
     },
   },
 };

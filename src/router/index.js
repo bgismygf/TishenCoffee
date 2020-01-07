@@ -35,18 +35,18 @@ export default new Router({
           component: Home,
         },
         {
-          name: 'Products',
-          path: 'products',
-          component: Products,
-        },
-        {
           name: 'Createorder',
           path: 'create_order',
           component: Createorder,
         },
         {
+          name: 'Products',
+          path: 'product_list',
+          component: Products,
+        },
+        {
           name: 'MoreContent',
-          path: 'more_content/:productId',
+          path: 'product_list/:productId',
           component: MoreContent,
         },
       ],

@@ -1,5 +1,6 @@
 <template>
     <div>
+        <loading :active.sync="isLoading"></loading>
         <div class="text-right">
             <button class="btn btn-main mt-0 mt-md-5"
                     @click="openModal(true)">

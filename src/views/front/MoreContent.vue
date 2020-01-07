@@ -8,12 +8,13 @@
                 <router-link to="/" class="text-main">首頁</router-link>
                 </li>
             <li class="breadcrumb-item">
-                <router-link to="/products" class="text-main">菜單</router-link>
+                <router-link to="/product_list" class="text-main">菜單</router-link>
                 </li>
             <li class="breadcrumb-item">
-                <router-link to="/products" class="text-main">輕食餐點</router-link>
+                <router-link :to="{path: '/product_list', query: {category: product.category}}"
+                  class="text-main">{{product.category}}</router-link>
                 </li>
-            <li class="breadcrumb-item" aria-current="page">招牌漢堡餐</li>
+            <li class="breadcrumb-item" aria-current="page">{{product.title}}</li>
           </ol>
         </nav>
 
@@ -29,16 +30,19 @@
                     </div>
                 </div>
                 <div class="border-top pt-3 text-muted">
-                    <p></p>
+                        <p>{{product.title}} {{qty}} {{product.unit}}</p>
+                        <p v-if="product.price >= 200">香脆薯條 {{qty}} {{product.unit}}</p>
+                        <p v-if="product.price > 100">$100 飲品或紅茶拿鐵(預設) {{qty}} 杯</p>
                 </div>
                 <div class="input-group">
-                    <select class="form-control mr-1">
-                        <option selected disabled>請選擇數量</option>
-                        <option value="num" v-for="num in 10" :key="num">
-                            {{num}} {{product.unit}}
+                    <select class="form-control mr-1" v-model="qty">
+                        <option value="0" selected disabled>請選擇數量</option>
+                        <option :value="num" v-for="num in 10" :key="num">
+                            選購 {{num}} {{product.unit}}
                         </option>
                     </select>
-                   <a href="#" class="btn btn-main">加入購物車</a>
+                   <a href="#" class="btn btn-main"
+                    @click.prevent="addtoCart(product.id, qty)">加入購物車</a>
                 </div>
                 </div>
             </div>
@@ -58,6 +62,7 @@ export default {
     return {
       productId: '',
       product: {},
+      qty: 0,
     };
   },
   methods: {
@@ -66,13 +71,27 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/product/${vm.productId}`;
       this.$http.get(api).then((response) => {
         vm.product = response.data.product;
-        console.log('po', response);
+      });
+    },
+    addtoCart(id, qty) {
+      if (qty === 0) {
+        this.$bus.$emit('message:push', '請選擇數量', 'danger');
+        return;
+      }
+      const cart = {
+        product_id: id,
+        qty,
+      };
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
+      this.$http.post(api, { data: cart }).then(() => {
+        vm.$bus.$emit('getCart');
+        vm.$bus.$emit('message:push', '已加入購物車', 'success');
       });
     },
   },
   created() {
     this.productId = this.$route.params.productId;
-    console.log(this.productId);
     this.getProductMoreContent();
   },
 };
