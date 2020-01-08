@@ -376,3 +376,59 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.header_bg_home {
+    background-image: url(https://images.unsplash.com/photo-1558584724-0e4d32ca55a4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1402&q=80);
+    min-height: calc(100vh - 66px);
+    background-blend-mode:multiply;
+    background-color: rgb(109, 109, 109);
+}
+
+.home_arrow_animation {
+    position: absolute;
+    left: 27px;
+    animation-name:arrow;
+    animation-duration:2s;
+    animation-iteration-count:infinite;
+}
+
+@keyframes arrow {
+    from {
+        top:10px;
+    }
+    to{
+        top:40px;
+        color: transparent;
+    }
+}
+
+.section1_img {
+    background-image: url(..\..\assets\img\upset.jpg);
+    background-position: center center;
+    background-size: cover;
+    background-blend-mode:multiply;
+    background-color: rgb(109, 109, 109);
+    background-attachment: fixed;
+}
+
+.section3_comment_text_overflow {
+    height: 60px;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.section3_comment_dialog {
+    border-radius:50%;
+    width:64px;
+    height:64px;
+}
+
+.section3_comment_alert-radius {
+    border-radius:40px;
+}
+</style>
+

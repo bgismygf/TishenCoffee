@@ -21,7 +21,7 @@
       </li>
       <li class="nav-item">
         <router-link class="nav-link nav_item_style my-1 my-lg-0" to="/product_list"
-          :class="{ 'active' : $route.name === 'product_list' }">菜單</router-link>
+          :class="{ 'active' : $route.name === 'Products' }">菜單</router-link>
       </li>
     </ul>
     <ul class="navbar-nav text-center text-lg-left">
@@ -122,9 +122,6 @@ export default {
       cart: {},
       favoriteData: [],
       cartLength: 0,
-      status: {
-        numLoading: false,
-      },
     };
   },
   methods: {
@@ -153,9 +150,7 @@ export default {
     getCart() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
-      this.status.numLoading = true;
       this.$http.get(api).then((response) => {
-        vm.status.numLoading = false;
         vm.cart = response.data.data;
         vm.cartLength = vm.cart.carts.length;
       });
@@ -166,7 +161,7 @@ export default {
       this.$http.delete(api).then(() => {
         vm.getCart();
         vm.$bus.$emit('removeCartItem');
-        vm.$bus.$emit('message:push', '已刪除', 'danger');
+        vm.$bus.$emit('message:push', '已從購物車中刪除', 'danger');
       });
     },
     getfavoriteData() {

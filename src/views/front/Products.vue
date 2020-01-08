@@ -24,7 +24,7 @@
           <div class="row">
             <div class="col-12 col-md-6 col-lg-4 mb-4"
                  v-for="item in filteredData" :key="item.id">
-                <div class="bg-cover-c products-img-h border-radius-5"
+                <div class="bg-cover-c products-img-h border-t-radius-5"
                      :style="{backgroundImage: `url(${item.imageUrl})`}">
                 </div>
                   <div class="products-favorite">
@@ -40,7 +40,7 @@
                         </i>
                     </a>
                   </div>
-                  <div class="text-white bg-main border-radius-5 p-3 mt-2">
+                  <div class="text-white bg-main border-b-radius-5 p-3 border-top">
                     <h5 class="border-bottom border-white pb-1 text-center text-md-left">
                       {{ item.title }}
                     </h5>
@@ -65,8 +65,6 @@
 </template>
 
 <script>
-
-
 export default {
   data() {
     return {
@@ -154,7 +152,7 @@ export default {
       this.favoriteData.splice(num, 1);
       localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
       this.$bus.$emit('favoriteData');
-      vm.$bus.$emit('message:push', '已刪除我的最愛', 'danger');
+      vm.$bus.$emit('message:push', '已從我的最愛中刪除', 'danger');
     },
     getCategory() {
       if (this.$route.query.category) {
@@ -188,7 +186,14 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style lang="scss" scoped>
+.products-img-h {
+    height: 250px;
+}
 
+.products-favorite {
+    position: absolute;
+    top: 12px;
+    right: 30px;
+}
 </style>

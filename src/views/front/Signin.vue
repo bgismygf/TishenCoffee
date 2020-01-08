@@ -13,7 +13,10 @@
   v-model="user.password">
   <div class="checkbox mb-3">
   </div>
-  <button  class="btn btn-lg btn-main btn-block" type="submit">Sign in</button>
+  <button  class="btn btn-lg btn-main btn-block" type="submit">
+    <span v-if="!message">Sign in</span>
+    <span v-else>{{message}}</span>
+    </button>
   <p class="mt-2 mb-1 text-muted">&copy; 2019</p>
   <router-link class="text-main" to="/">
   <i class="fas fa-arrow-left"></i>
@@ -32,6 +35,7 @@ export default {
         username: '',
         password: '',
       },
+      message: '',
     };
   },
   methods: {
@@ -41,9 +45,51 @@ export default {
       this.$http.post(api, vm.user).then((response) => {
         if (response.data.success) {
           vm.$router.push('/dashboard/products_manage');
+        } else {
+          vm.message = response.data.message;
+          vm.textSwitch();
         }
       });
+    },
+    textSwitch() {
+      const vm = this;
+      setTimeout(() => {
+        vm.message = '';
+      }, 3000);
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+.form-signin .checkbox {
+  font-weight: 400;
+}
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+</style>
+

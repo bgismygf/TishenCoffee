@@ -148,7 +148,6 @@ export default {
         vm.isLoading = false;
         vm.coupons = response.data.coupons;
         vm.pagination = response.data.pagination;
-        console.log('get', response);
       });
     },
     openModal(isNew, item) {
@@ -171,9 +170,13 @@ export default {
         httpMethod = 'put';
       }
       this.$http[httpMethod](api, { data: vm.tempCoupon }).then((response) => {
-        $('#couponModal').modal('hide');
-        console.log(response);
-        vm.getCouponData();
+        if (response.data.success) {
+          $('#couponModal').modal('hide');
+          vm.getCouponData();
+          vm.$bus.$emit('message:push', response.data.message, 'success');
+        } else {
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
+        }
       });
     },
     opendelCouponModal(item) {
@@ -187,8 +190,9 @@ export default {
         if (response.data.success) {
           $('#delCouponModal').modal('hide');
           vm.getCouponData();
+          vm.$bus.$emit('message:push', response.data.message, 'success');
         } else {
-          console.log('no', response);
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
         }
       });
     },

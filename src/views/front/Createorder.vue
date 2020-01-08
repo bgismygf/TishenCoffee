@@ -179,7 +179,7 @@
           </div>
           <div class="form-group">
             <label for="name">姓名</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="請輸入訂購人姓名"
+            <input type="text" class="form-control" id="name" name="name" placeholder="請輸入您的姓名"
             v-model="form.user.name" v-validate="'required'">
             <span class="text-danger" v-if="errors.has('name')">
               請輸入您的姓名
@@ -187,7 +187,7 @@
           </div>
           <div class="form-group">
             <label for="tel">電話</label>
-            <input type="text" class="form-control" id="tel" name="tel" placeholder="請輸入訂購人電話"
+            <input type="text" class="form-control" id="tel" name="tel" placeholder="請輸入您的電話"
             v-model="form.user.tel" v-validate="'required'">
             <span class="text-danger" v-if="errors.has('tel')">
               請輸入您的電話
@@ -196,7 +196,7 @@
           <div class="form-group">
             <label for="address">地址</label>
             <input type="text" class="form-control" id="address" name="address"
-              placeholder="請輸入訂購人地址"
+              placeholder="請輸入您的地址"
               v-model="form.user.address"
               v-validate="'required'">
             <span class="text-danger" v-if="errors.has('address')">
@@ -226,20 +226,24 @@
     <div v-if="step === 3">
         <table class="table mb-3">
                     <tr>
-                      <th width="150">訂購人 Email</th>
+                      <th width="150">您的 Email:</th>
                       <td v-if="orderData.user">{{orderData.user.email}}</td>
                     </tr>
                     <tr>
-                      <th width="150">訂購人姓名</th>
+                      <th width="150">您的姓名:</th>
                       <td v-if="orderData.user">{{orderData.user.name}}</td>
                     </tr>
                     <tr>
-                      <th width="150">訂購人電話</th>
+                      <th width="150">您的電話:</th>
                       <td v-if="orderData.user">{{orderData.user.tel}}</td>
                     </tr>
                     <tr>
-                      <th width="150">留言</th>
+                      <th width="150">您的地址:</th>
                       <td v-if="orderData.user">{{orderData.user.address}}</td>
+                    </tr>
+                    <tr>
+                      <th v-if="orderData.message" width="150">您的留言:</th>
+                      <td v-if="orderData.message">{{orderData.message}}</td>
                     </tr>
                     <tr>
                       <th width="150">付款狀態</th>
@@ -290,16 +294,19 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
       this.$http.get(api).then((response) => {
         vm.cart = response.data.data;
-        console.log(vm.cart);
       });
     },
     removeCartItem(id) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart/${id}`;
-      this.$http.delete(api).then(() => {
-        vm.getCart();
-        vm.$bus.$emit('getCart');
-        vm.$bus.$emit('message:push', '已刪除', 'danger');
+      this.$http.delete(api).then((response) => {
+        if (response.data.success) {
+          vm.getCart();
+          vm.$bus.$emit('getCart');
+          vm.$bus.$emit('message:push', '已刪除', 'danger');
+        } else {
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
+        }
       });
     },
     addCouponCode() {
@@ -308,9 +315,14 @@ export default {
       const coupon = {
         code: this.coupon_code,
       };
-      this.$http.post(api, { data: coupon }).then(() => {
-        vm.coupon_code = '';
-        vm.getCart();
+      this.$http.post(api, { data: coupon }).then((response) => {
+        if (response.data.success) {
+          vm.coupon_code = '';
+          vm.getCart();
+          vm.$bus.$emit('message:push', response.data.message, 'success');
+        } else {
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
+        }
       });
     },
     createOrder() {
@@ -321,12 +333,11 @@ export default {
         if (valid) {
           vm.$http.post(api, { data: order }).then((response) => {
             vm.step = 3;
-            console.log(response.data.orderId);
             vm.orderId = response.data.orderId;
             vm.getOrder(vm.orderId);
           });
         } else {
-          console.log('no');
+          vm.$bus.$emit('message:push', '請確認資料是否完整', 'danger');
         }
       });
     },
@@ -335,15 +346,13 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/order/${id}`;
       this.$http.get(api).then((response) => {
         vm.orderData = response.data.order;
-        console.log('order', response);
       });
     },
     payOrder() {
       const vm = this;
       const id = vm.orderId;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/pay/${id}`;
-      this.$http.post(api).then((response) => {
-        console.log('payOrder', response);
+      this.$http.post(api).then(() => {
         vm.getOrder(id);
         vm.$bus.$emit('getCart');
       });

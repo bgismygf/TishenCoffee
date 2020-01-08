@@ -209,10 +209,13 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/products?page=${page}`;
       vm.isLoading = true;
       this.$http.get(api).then((response) => {
-        console.log(response.data);
-        vm.isLoading = false;
-        vm.products = response.data.products;
-        vm.pagination = response.data.pagination;
+        if (response.data.success) {
+          vm.isLoading = false;
+          vm.products = response.data.products;
+          vm.pagination = response.data.pagination;
+        } else {
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
+        }
       });
     },
     openModel(isNew, item) {
@@ -235,12 +238,11 @@ export default {
         httpMethod = 'put';
       }
       this.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
-        console.log(response.data);
         if (response.data.success) {
           $('#productModal').modal('hide');
           vm.getProducts();
         } else {
-          console.log(response.data.success);
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
         }
       });
     },
@@ -252,12 +254,12 @@ export default {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/product/${vm.tempProduct.id}`;
       this.$http.delete(api, { data: vm.tempProduct }).then((response) => {
-        console.log(response.data);
         if (response.data.success) {
           $('#delProductModal').modal('hide');
           vm.getProducts();
+          vm.$bus.$emit('message:push', response.data.message, 'success');
         } else {
-          console.log(response.data.success);
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
         }
       });
     },
