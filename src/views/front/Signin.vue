@@ -46,6 +46,8 @@ export default {
         if (response.data.success) {
           vm.$router.push('/dashboard/products_manage');
         } else {
+          vm.user.username = '';
+          vm.user.password = '';
           vm.message = response.data.message;
           vm.textSwitch();
         }

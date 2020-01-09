@@ -5,16 +5,16 @@
             <thead>
                 <tr>
                     <th>購買時間</th>
-                    <th class="text-left">訂購人資料</th>
-                    <th>購買款項</th>
+                    <th class="d-none d-sm-table-cell">訂購人資料</th>
+                    <th class="d-none d-lg-table-cell">購買款項</th>
                     <th class="text-center">應付金額</th>
-                    <th class="text-center">是否付款</th>
+                    <th class="text-center d-none d-md-table-cell">是否付款</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(item, index) in orders" :key="item.id" v-if="index > 0">
                     <td>{{ item.create_at | date }}</td>
-                    <td>
+                    <td class="d-none d-sm-table-cell">
                         <ul class="list-unstyled">
                             <li v-if="item.user">
                                 姓名: {{ item.user.name }}
@@ -28,9 +28,12 @@
                             <li v-if="item.user">
                                 地址: {{ item.user.address }}
                             </li>
+                            <li v-if="item.message">
+                                留言: {{ item.message }}
+                            </li>
                         </ul>
                     </td>
-                    <td>
+                    <td class="d-none d-lg-table-cell">
                         <ul class="list-unstyled">
                             <li v-for="(product, id) in item.products" :key="id">
                                 {{product.product.title}}: {{product.qty}}
@@ -38,8 +41,11 @@
                             </li>
                         </ul>
                     </td>
-                    <td class="text-right">{{ item.total | currency }}</td>
-                    <td class="text-center">
+                    <td class="text-right"
+                            :class="{'text-success': item.is_paid,'text-danger': !item.is_paid,}">
+                            {{ item.total | currency }}
+                        </td>
+                    <td class="text-center d-none d-md-table-cell">
                         <span class="text-success" v-if="item.is_paid">已付款</span>
                         <span class="text-danger" v-else>未付款</span>
                     </td>

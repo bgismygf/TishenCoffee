@@ -11,26 +11,26 @@
         <table class="table mt-4 table-td">
           <thead>
             <tr>
-              <th width="120">分類</th>
-              <th class="text-center">縮圖</th>
-              <th>產品名稱</th>
-              <th width="120">原價</th>
-              <th width="120">售價</th>
-              <th class="text-center" width="120">是否啟用</th>
-              <th width="145">編輯</th>
+              <th class="d-none d-md-table-cell">分類</th>
+              <th class="text-center d-none d-xl-table-cell">縮圖</th>
+              <th>名稱</th>
+              <th class="d-none d-lg-table-cell">原價</th>
+              <th class="d-none d-sm-table-cell">售價</th>
+              <th class="text-center d-none d-md-table-cell">是否啟用</th>
+              <th >編輯</th>
             </tr>
           </thead>
         <tbody>
           <tr v-for="item in products" :key="item.id">
-            <td>{{ item.category }}</td>
-            <td>
-              <div class="table-img bg-cover-c border-radius-10"
+            <td class="d-none d-md-table-cell">{{ item.category }}</td>
+            <td class="d-none d-xl-table-cell">
+              <div class="table-img bg-cover-c"
                 :style="{backgroundImage:`url(${item.imageUrl})`}"></div>
             </td>
             <td>{{ item.title }}</td>
-            <td class="text-right">{{ item.origin_price | currency}}</td>
-            <td class="text-right">{{ item.price | currency}}</td>
-            <td class="text-center">
+            <td class="text-right d-none d-lg-table-cell">{{ item.origin_price | currency}}</td>
+            <td class="text-right d-none d-sm-table-cell">{{ item.price | currency}}</td>
+            <td class="text-center d-none d-md-table-cell">
               <span v-if="item.is_enabled" class="text-success">啟用</span>
               <span v-else class="text-danger">未啟用</span>
             </td>
@@ -257,7 +257,7 @@ export default {
         if (response.data.success) {
           $('#delProductModal').modal('hide');
           vm.getProducts();
-          vm.$bus.$emit('message:push', response.data.message, 'success');
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
         } else {
           vm.$bus.$emit('message:push', response.data.message, 'danger');
         }

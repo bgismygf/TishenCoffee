@@ -11,18 +11,18 @@
             <thead>
                 <tr>
                     <th class="text-left">名稱</th>
-                    <th class="text-left">折扣百分比</th>
-                    <th class="">到期日</th>
-                    <th class="" width="120">是否啟用</th>
+                    <th class="text-left d-none d-md-table-cell">折扣百分比</th>
+                    <th class="d-none d-sm-table-cell">到期日</th>
+                    <th class="d-none d-md-table-cell" width="120">是否啟用</th>
                     <th class="" width="145">編輯</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="item in coupons" :key="item.id">
                     <td class="text-left">{{ item.title }}</td>
-                    <td>{{ item.percent }} %</td>
-                    <td class="">{{ item.due_date }}</td>
-                    <td class="">
+                    <td class="d-none d-md-table-cell">{{ item.percent }} %</td>
+                    <td class="d-none d-sm-table-cell">{{ item.due_date }}</td>
+                    <td class="d-none d-md-table-cell">
                         <span v-if="item.is_enabled" class="text-success">啟用</span>
                         <span v-else class="text-danger">未啟用</span>
                     </td>
@@ -190,7 +190,7 @@ export default {
         if (response.data.success) {
           $('#delCouponModal').modal('hide');
           vm.getCouponData();
-          vm.$bus.$emit('message:push', response.data.message, 'success');
+          vm.$bus.$emit('message:push', response.data.message, 'danger');
         } else {
           vm.$bus.$emit('message:push', response.data.message, 'danger');
         }
