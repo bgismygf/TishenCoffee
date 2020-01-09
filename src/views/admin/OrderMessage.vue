@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in orders" :key="item.id" v-if="index > 0">
+                <tr v-for="item in orders" :key="item.id">
                     <td>{{ item.create_at | date }}</td>
                     <td class="d-none d-sm-table-cell">
                         <ul class="list-unstyled">

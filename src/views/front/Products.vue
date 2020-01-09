@@ -50,11 +50,20 @@
                       </div>
                         <a href="#"
                           class="btn btn-main border-white btn-sm btn-block"
-                          @click.prevent="moreContent(item.id)">
+                          @click.prevent="moreContent(item.id)"
+                          v-if="item.is_enabled">
                           查看更多
                         </a>
+                        <a href="#" class="btn btn-main border-white btn-sm btn-block disabled"
+                          v-else>
+                          Coming Soon !
+                        </a>
                         <a href="#" class="btn btn-danger btn-sm btn-block"
-                         @click.prevent="addtoCart(item.id)">加入購物車</a>
+                         @click.prevent="addtoCart(item.id)"
+                         v-if="item.is_enabled">加入購物車</a>
+                        <a href="#" v-else class="btn btn-danger btn-sm btn-block disabled">
+                          Sold Out !
+                          </a>
                   </div>
                 </div>
             </div>
