@@ -31,19 +31,20 @@
           <i v-else class="fas fa-user-alt fa-lg"></i>
         </a>
         </li>
-      <li class="nav-item mr-lg-4">
+      <li class="nav-item mr-lg-3">
             <div class="dropdown">
               <a class="nav-link nav_item_style my-1 my-lg-0" id="favorite"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="nav_badge_block">
                   <i class="fas fa-heart fa-lg"></i>
-                  <span class="badge badge-pill badge-danger nav_badge">
+                  <span class="badge badge-pill badge-danger nav_badge"
+                    v-if="favoriteData.length !== 0">
                     {{favoriteData.length}}
                     </span>
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-right nav_favorite_block_xs-md"
-                aria-labelledby="favorite" style="min-width:290px;">
+                aria-labelledby="favorite" style="min-width:325px;">
                 <div class="px-3 py-2">
                   <h5 class="text-center">我的最愛</h5>
                   <table class="table">
@@ -62,7 +63,10 @@
                       @click.prevent="removeAllFavorite">
                     全部刪除
                     </a>
-                    <h6 class="text-center text-danger" v-else>目前是空的</h6>
+                    <h6 class="text-center" v-else>
+                      <router-link to="/product_list"
+                        class="text-center text-danger">目前是空的，前往菜單逛逛吧！</router-link>
+                    </h6>
                 </div>
             </div>
           </div>
@@ -70,18 +74,16 @@
       <li class="nav-item">
         <div class="dropdown">
           <a class="nav-link nav_item_style my-1 my-lg-0" id="dropdownMenu2"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-          :class="{ 'active' : $route.name === 'Createorder' }"
-          >
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="nav_badge_block">
               <i class="fas fa-shopping-cart fa-lg"></i>
-            <span class="badge badge-pill badge-danger nav_badge">
+            <span class="badge badge-pill badge-danger nav_badge" v-if="cartLength !== 0">
               {{ cartLength }}
               </span>
             </div>
           </a>
           <div class="dropdown-menu dropdown-menu-right"
-            aria-labelledby="dropdownMenu2" style="min-width:400px;">
+            aria-labelledby="dropdownMenu2" style="min-width:450px;">
             <div class="px-3 py-2">
               <h5 class="text-center">購物車清單</h5>
               <table class="table">
@@ -102,7 +104,10 @@
                     v-if="cartLength !== 0">
                 結帳去
               </router-link>
-              <h6 class="text-center text-danger" v-else>購物車是空的</h6>
+              <h6 class="text-center" v-else>
+                <router-link to="/product_list"
+                  class="text-center text-danger">購物車是空的，前往菜單逛逛吧！</router-link>
+              </h6>
             </div>
         </div>
       </div>
@@ -128,7 +133,7 @@ export default {
     signinIcon() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/user/check`;
-      this.$http.post(api).then((response) => {
+      vm.$http.post(api).then((response) => {
         if (response.data.success) {
           vm.signinStatus = true;
         } else {
@@ -139,7 +144,7 @@ export default {
     signinJudge() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/user/check`;
-      this.$http.post(api).then((response) => {
+      vm.$http.post(api).then((response) => {
         if (response.data.success) {
           vm.$router.push('/dashboard/products_manage');
         } else {
@@ -150,7 +155,7 @@ export default {
     getCart() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
-      this.$http.get(api).then((response) => {
+      vm.$http.get(api).then((response) => {
         vm.cart = response.data.data;
         vm.cartLength = vm.cart.carts.length;
       });
@@ -158,7 +163,7 @@ export default {
     removeCartItem(id) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart/${id}`;
-      this.$http.delete(api).then(() => {
+      vm.$http.delete(api).then(() => {
         vm.getCart();
         vm.$bus.$emit('removeCartItem');
         vm.$bus.$emit('message:push', '已從購物車中刪除', 'danger');
@@ -169,30 +174,31 @@ export default {
     },
     removeFavorite(item) {
       const vm = this;
-      const num = this.favoriteData.findIndex((el) => {
+      const num = vm.favoriteData.findIndex((el) => {
         const result = el.id === item.id;
         return result;
       });
-      this.favoriteData.splice(num, 1);
+      vm.favoriteData.splice(num, 1);
       localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
-      this.getfavoriteData();
-      this.$bus.$emit('removeFavorite', item);
+      vm.getfavoriteData();
+      vm.$bus.$emit('favoriteData');
+      vm.$bus.$emit('message:push', '已從我的最愛中刪除', 'danger');
     },
     removeAllFavorite() {
       const vm = this;
-      this.favoriteData = [];
+      vm.favoriteData = [];
       localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
-      this.$bus.$emit('removeAllFavorite', this.favoriteData);
+      vm.$bus.$emit('removeAllFavorite', this.favoriteData);
       vm.$bus.$emit('message:push', '全部已刪除', 'danger');
     },
   },
   created() {
     const vm = this;
-    this.signinIcon();
-    this.getCart();
-    this.getfavoriteData();
-    this.$bus.$on('getCart', vm.getCart);
-    this.$bus.$on('favoriteData', vm.getfavoriteData);
+    vm.signinIcon();
+    vm.getCart();
+    vm.getfavoriteData();
+    vm.$bus.$on('getCart', vm.getCart);
+    vm.$bus.$on('favoriteData', vm.getfavoriteData);
   },
 };
 </script>

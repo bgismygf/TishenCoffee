@@ -144,7 +144,7 @@ export default {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/coupons?page=${page}`;
       this.isLoading = true;
-      this.$http.get(api).then((response) => {
+      vm.$http.get(api).then((response) => {
         vm.isLoading = false;
         vm.coupons = response.data.coupons;
         vm.pagination = response.data.pagination;
@@ -165,11 +165,11 @@ export default {
       const vm = this;
       let httpMethod = 'post';
       let api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/coupon`;
-      if (!this.isNew) {
+      if (!vm.isNew) {
         api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/coupon/${vm.tempCoupon.id}`;
         httpMethod = 'put';
       }
-      this.$http[httpMethod](api, { data: vm.tempCoupon }).then((response) => {
+      vm.$http[httpMethod](api, { data: vm.tempCoupon }).then((response) => {
         if (response.data.success) {
           $('#couponModal').modal('hide');
           vm.getCouponData();
@@ -186,7 +186,7 @@ export default {
     delCoupon() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/coupon/${vm.tempCoupon.id}`;
-      this.$http.delete(api, { data: vm.tempCoupon }).then((response) => {
+      vm.$http.delete(api, { data: vm.tempCoupon }).then((response) => {
         if (response.data.success) {
           $('#delCouponModal').modal('hide');
           vm.getCouponData();

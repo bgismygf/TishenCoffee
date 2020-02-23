@@ -208,7 +208,7 @@ export default {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/products?page=${page}`;
       vm.isLoading = true;
-      this.$http.get(api).then((response) => {
+      vm.$http.get(api).then((response) => {
         if (response.data.success) {
           vm.isLoading = false;
           vm.products = response.data.products;
@@ -237,7 +237,7 @@ export default {
         api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/product/${vm.tempProduct.id}`;
         httpMethod = 'put';
       }
-      this.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
+      vm.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
         if (response.data.success) {
           $('#productModal').modal('hide');
           vm.getProducts();
@@ -253,7 +253,7 @@ export default {
     delProduct() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/product/${vm.tempProduct.id}`;
-      this.$http.delete(api, { data: vm.tempProduct }).then((response) => {
+      vm.$http.delete(api, { data: vm.tempProduct }).then((response) => {
         if (response.data.success) {
           $('#delProductModal').modal('hide');
           vm.getProducts();
@@ -264,18 +264,18 @@ export default {
       });
     },
     uploadFile() {
-      const uploadedFile = this.$refs.files.files[0];
       const vm = this;
+      const uploadedFile = vm.$refs.files.files[0];
       const formData = new FormData();
       formData.append('file-to-upload', uploadedFile);
       const url = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/upload`;
-      this.status.fileUploading = true;
-      this.$http.post(url, formData, {
+      vm.status.fileUploading = true;
+      vm.$http.post(url, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       }).then((response) => {
-        this.status.fileUploading = false;
+        vm.status.fileUploading = false;
         if (response.data.success) {
           vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl);
         } else {

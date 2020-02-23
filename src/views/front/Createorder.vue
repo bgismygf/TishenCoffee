@@ -1,8 +1,9 @@
 <template>
   <div>
+    <loading :active.sync="isLoading"></loading>
     <div class="container">
         <div class="row justify-content-center text-center mt-5 mb-3">
-            <div class="col-sm-12 col-md-4">
+            <div class="col-lg-3" v-if="!orderData.is_paid">
                 <h6 class="border-radius-5 border-2px py-2 px-3 text-white"
                   :class="{'bg-main': step >= 1}">
                     1.確認購物清單
@@ -10,7 +11,7 @@
                     <i class="far fa-circle" v-else></i>
                 </h6>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-lg-3" v-if="!orderData.is_paid">
                 <h6 class="border-radius-5 border-2px py-2 px-3 border-main"
                   :class="{'bg-main': step >= 2,'text-white': step >= 2}">
                     2.填寫訂購資料
@@ -18,23 +19,33 @@
                     <i class="far fa-circle" v-else></i>
                 </h6>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-lg-3" v-if="!orderData.is_paid">
                 <h6 class="border-radius-5 border-2px py-2 px-3 border-main"
                   :class="{'bg-main': step >= 3,'text-white': step >= 3}">
                     3.付款 & 完成
-                    <i class="fas fa-check-circle" v-if="orderData.is_paid"></i>
-                    <i class="far fa-circle" v-else></i>
+                    <!-- <i class="fas fa-check-circle" v-if="orderData.is_paid"></i>
+                    <i class="far fa-circle" v-else></i> -->
+                    <i class="far fa-circle"></i>
                 </h6>
+            </div>
+            <div class="col-md-9">
+                <h4 class="border-radius-5 border-2px py-3 px-3 border-main bg-main text-white"
+                  :class="{'bg-main': step >= 3,'text-white': step >= 3}" v-if="orderData.is_paid">
+                    付款成功
+                    <i class="fas fa-check-circle"></i>
+                </h4>
             </div>
         </div>
         <!-- step 1 -->
-                <div class="table-responsive" v-if="step === 1">
+        <div class="row justify-content-center" v-if="step === 1">
+          <div class="col-lg-10">
+              <div class="table-responsive">
                     <table class="table mt-3 mb-4 table-td">
                 <thead>
                     <tr>
                     <th scope="col" class="d-none d-md-table-cell text-center">縮圖</th>
                     <th scope="col">品名</th>
-                    <th scope="col" class="d-none d-sm-table-cell">數量</th>
+                    <th scope="col" class="d-sm-table-cell text-center">數量</th>
                     <th scope="col" class="text-center">價格</th>
                     <th scope="col" class="text-center">取消</th>
                     </tr>
@@ -48,10 +59,20 @@
                     </td>
                     <td><div>{{ item.product.title }}</div>
                         <div v-if="item.coupon"
-                            class="text-success mt-2">已套用折價卷 - [carolshop95]
+                            class="text-success mt-2">已套用折價卷
                         </div>
                     </td>
-                    <td class="d-none d-sm-table-cell">{{ item.qty }} / {{ item.product.unit }}</td>
+                    <td class="d-sm-table-cell text-center">
+                      <a href="#" class="mr-2 text-main"
+                        @click.prevent="CartAdjNum(item, false)">
+                        <i class="fas fa-minus"></i>
+                      </a>
+                      {{ item.qty }}
+                      <a href="#" class="ml-2 text-main"
+                        @click.prevent="CartAdjNum(item, true)">
+                        <i class="fas fa-plus"></i>
+                      </a>
+                    </td>
                     <td class="text-right">
                         <div v-if="!item.coupon">$ {{ item.total }}</div>
                         <del v-if="item.coupon">$ {{ item.total }}</del>
@@ -69,7 +90,7 @@
                 <tfoot class="bg-light table-tfoot">
                     <tr>
                         <td class="d-none d-md-table-cell"></td>
-                        <td class="d-none d-sm-table-cell"></td>
+                        <td class="d-sm-table-cell"></td>
                         <td class="text-right" v-if="cart.carts"
                           >共 {{cart.carts.length}} 件</td>
                         <td class="text-right">總計</td>
@@ -90,7 +111,7 @@
                         aria-describedby="button-addon2"
                         v-model="coupon_code">
                 <div class="input-group-append">
-                    <button class="btn btn-success"
+                    <button class="btn btn-main"
                             type="button"
                             id="button-addon2"
                             @click="addCouponCode">套用折價卷
@@ -103,15 +124,17 @@
                     繼續購買
                 </router-link>
                 <a href="#" class="btn btn-danger" v-if="cart.total !== 0"
-                  @click.prevent="step = 2">
+                  @click.prevent="stepAfter(2)">
                     填寫訂購資料
                     <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
+      </div>
+    </div>
 <!-- step 2 -->
 <div class="row justify-content-center mb-4" v-if="step === 2">
-    <div class="col-md-10">
+    <div class="col-lg-10">
        <div class="accordion" id="accordionExample">
           <div class="text-center justify-content-center d-flex" id="headingOne">
               <a href="#" class="text-main d-flex flex-column w-25"
@@ -167,38 +190,42 @@
         <h5 class="text-center text-white mb-3 bg-main py-2 border-radius-5">訂購資料</h5>
         <div class="form-row">
           <div class="form-group col-12">
-              <label for="email">Email</label>
+              <label for="email">Email (*)</label>
               <input type="email" class="form-control" id="email" name="email"
                 placeholder="請輸入 Email"
                 v-model="form.user.email"
-                v-validate="'required|email'">
+                v-validate="'required|email'"
+                :class="{'is-invalid': errors.first('email')}">
               <span class="text-danger" v-if="errors.has('email')">
               {{errors.first('email')}}
               </span>
             </div>
           </div>
           <div class="form-group">
-            <label for="name">姓名</label>
+            <label for="name">姓名 (*)</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="請輸入您的姓名"
-            v-model="form.user.name" v-validate="'required'">
+              v-model="form.user.name" v-validate="'required'"
+              :class="{'is-invalid': errors.first('name')}">
             <span class="text-danger" v-if="errors.has('name')">
               請輸入您的姓名
             </span>
           </div>
           <div class="form-group">
-            <label for="tel">電話</label>
+            <label for="tel">電話 (*)</label>
             <input type="text" class="form-control" id="tel" name="tel" placeholder="請輸入您的電話"
-            v-model="form.user.tel" v-validate="'required'">
+              v-model="form.user.tel" v-validate="'required'"
+              :class="{'is-invalid': errors.first('tel')}">
             <span class="text-danger" v-if="errors.has('tel')">
               請輸入您的電話
             </span>
           </div>
           <div class="form-group">
-            <label for="address">地址</label>
+            <label for="address">地址 (*)</label>
             <input type="text" class="form-control" id="address" name="address"
               placeholder="請輸入您的地址"
               v-model="form.user.address"
-              v-validate="'required'">
+              v-validate="'required'"
+              :class="{'is-invalid': errors.first('address')}">
             <span class="text-danger" v-if="errors.has('address')">
               請輸入您的地址
             </span>
@@ -209,7 +236,7 @@
             v-model="form.message"></textarea>
           </div>
           <div class="d-flex justify-content-between">
-            <a href="#" class="btn btn-main" @click.prevent="step = 1">
+            <a href="#" class="btn btn-main" @click.prevent="stepAfter(1)">
               <i class="fas fa-arrow-left"></i>
               回上一步
               </a>
@@ -224,34 +251,37 @@
   </div>
     <!-- step 3 -->
     <div v-if="step === 3">
-        <table class="table mb-3">
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <table class="table mb-3">
                     <tr>
-                      <th width="150">您的 Email:</th>
+                      <th width="150">您的 Email：</th>
                       <td v-if="orderData.user">{{orderData.user.email}}</td>
                     </tr>
                     <tr>
-                      <th width="150">您的姓名:</th>
+                      <th width="150">您的姓名：</th>
                       <td v-if="orderData.user">{{orderData.user.name}}</td>
                     </tr>
                     <tr>
-                      <th width="150">您的電話:</th>
+                      <th width="150">您的電話：</th>
                       <td v-if="orderData.user">{{orderData.user.tel}}</td>
                     </tr>
                     <tr>
-                      <th width="150">您的地址:</th>
+                      <th width="150">您的地址：</th>
                       <td v-if="orderData.user">{{orderData.user.address}}</td>
                     </tr>
                     <tr>
-                      <th v-if="orderData.message" width="150">您的留言:</th>
+                      <th v-if="orderData.message" width="150">您的留言：</th>
                       <td v-if="orderData.message">{{orderData.message}}</td>
                     </tr>
                     <tr>
                       <th width="150">付款狀態</th>
                       <td v-if="!orderData.is_paid">尚未付款</td>
-                      <td v-else class="text-success">付款成功，感謝您的訂購，我們將盡快與您聯絡</td>
+                      <td v-else class="text-danger">付款成功，感謝您的訂購，我們將盡快與您聯絡。</td>
                     </tr>
             </table>
-            <div class="mb-5">
+        </div>
+        <div class="col-10">
               <div v-if="!orderData.is_paid" class="text-right">
                 <a href="#" class="btn btn-danger" @click.prevent="payOrder()">確認付款</a>
               </div>
@@ -262,6 +292,7 @@
                 </router-link>
               </div>
           </div>
+      </div>
     </div>
 </div>
   </div>
@@ -275,6 +306,7 @@ export default {
       orderId: '',
       coupon_code: '',
       listSwitchValue: false,
+      isLoading: false,
       cart: {},
       form: {
         user: {
@@ -299,7 +331,7 @@ export default {
     removeCartItem(id) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart/${id}`;
-      this.$http.delete(api).then((response) => {
+      vm.$http.delete(api).then((response) => {
         if (response.data.success) {
           vm.getCart();
           vm.$bus.$emit('getCart');
@@ -309,13 +341,44 @@ export default {
         }
       });
     },
+    CartAdjNum(item, boolean) {
+      const vm = this;
+      const cart = {
+        product_id: item.product.id,
+        qty: 0,
+      };
+      if (boolean) {
+        cart.qty = item.qty + 1;
+      } else {
+        if (item.qty - 1 === 0) {
+          return;
+        }
+        cart.qty = item.qty - 1;
+      }
+      const deleteApi = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart/${item.id}`;
+      const addApi = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
+      vm.isLoading = true;
+      vm.$http.post(addApi, { data: cart });
+      vm.$http.delete(deleteApi).then((response) => {
+        if (response.data.success) {
+          vm.getCart();
+          vm.$bus.$emit('getCart');
+          vm.$bus.$emit('message:push', '數量以更改', 'success');
+          vm.isLoading = false;
+        }
+      });
+    },
+    stepAfter(num) {
+      this.step = num;
+      window.scrollTo(0, 0);
+    },
     addCouponCode() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/coupon`;
       const coupon = {
-        code: this.coupon_code,
+        code: vm.coupon_code,
       };
-      this.$http.post(api, { data: coupon }).then((response) => {
+      vm.$http.post(api, { data: coupon }).then((response) => {
         if (response.data.success) {
           vm.coupon_code = '';
           vm.getCart();
@@ -329,10 +392,11 @@ export default {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/order`;
       const order = vm.form;
-      this.$validator.validate().then((valid) => {
+      vm.$validator.validate().then((valid) => {
         if (valid) {
           vm.$http.post(api, { data: order }).then((response) => {
             vm.step = 3;
+            window.scrollTo(0, 0);
             vm.orderId = response.data.orderId;
             vm.getOrder(vm.orderId);
           });
@@ -343,8 +407,10 @@ export default {
     },
     getOrder(id) {
       const vm = this;
+      vm.isLoading = true;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/order/${id}`;
-      this.$http.get(api).then((response) => {
+      vm.$http.get(api).then((response) => {
+        vm.isLoading = false;
         vm.orderData = response.data.order;
       });
     },
@@ -352,7 +418,7 @@ export default {
       const vm = this;
       const id = vm.orderId;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/pay/${id}`;
-      this.$http.post(api).then(() => {
+      vm.$http.post(api).then(() => {
         vm.getOrder(id);
         vm.$bus.$emit('getCart');
       });
@@ -360,7 +426,7 @@ export default {
   },
   mounted() {
     const vm = this;
-    this.$bus.$on('removeCartItem', vm.getCart);
+    vm.$bus.$on('removeCartItem', vm.getCart);
   },
   created() {
     this.getCart();

@@ -3,17 +3,16 @@
         <header class="text-white pb-5 pt-5 header_bg_home bg-cover-c">
             <div class="container">
                 <div class="text-center">
-                    <h1 class="mb-5" style="margin-top: 165px;">INSTANT. ENJOY. YUMMY</h1>
+                    <h1 class="mb-5 font-weight-bold"
+                        style="margin-top: 125px;">INSTANT. ENJOY. YUMMY</h1>
                         <form class="mb-5">
                             <router-link to="/product_list" href="#"
                                          class="btn btn-danger">開始訂購
                             </router-link>
                         </form>
-                    <a class="text-decoration-none text-white" href="#"
-                       style="position: relative;"
+                    <a class="text-decoration-none text-white position-relative" href="#"
                        @click.prevent="slide">
-                        <span>服務介紹</span>
-                        <div class="home_arrow_animation ">
+                        <div class="home_arrow_animation">
                             <i class="fas fa-chevron-down"></i>
                         </div>
                     </a>
@@ -23,12 +22,12 @@
 
 <!-- 介紹區 -->
 
-    <section class="bg-match text-white py-5 jq_section1">
+    <section class="text-white py-5 jq_section1">
         <div class="container">
             <div class="row">
                 <div class="col-12 justify-content-center">
                     <div class="section1_img border-radius-10 p-5">
-                        <h2 class="text-center mb-4 mb-md-5">您有以下的困擾嗎 ?</h2>
+                        <h2 class="text-center mb-4 mb-md-5 font-weight-bold">您有以下的困擾嗎？</h2>
                         <div class="row mb-md-3 mb-4">
                             <div class="col-lg-6 col-md-9 col-12">
                                 <div class="h5 text-lg-right">
@@ -46,7 +45,7 @@
                         <div class="row mb-md-3 mb-4">
                             <div class="col-lg-5 col-md-7 col-12">
                                 <div class="h6">
-                                    想多睡一會，但還是得早起準備
+                                    想多睡一會兒，但還是得早起準備
                                 </div>
                             </div>
                         </div>
@@ -77,29 +76,29 @@
 
 <!-- 解決區 -->
 
-    <section class="py-5 mb-2 bg-light">
+    <section class="py-5 bg-main text-white">
         <div class="container">
-            <h3 class="text-center mb-5">以上困擾，讓我們為您解決</h3>
+            <h3 class="text-center mb-5 font-weight-bold">以上困擾，讓我們為您解決</h3>
             <div class="row">
-                <div class="col-12 col-md-6 pb-4 pb-md-0">
-                    <div class="d-flex">
-                        <div class="mr-3" style="font-size:70px;">
+                <div class="col-12 col-md-6 pb-4 pb-md-0 px-3">
+                    <div class="d-flex align-items-top">
+                        <div class="mr-3" style="font-size:50px;">
                             <i class="far fa-clock"></i>
                         </div>
-                        <div>
+                        <div class="pt-3">
                             <h4>增加空閒時間</h4>
-                            <p>每日 100 元起，就能省下 30 ~ 60 分鐘的時間，輕鬆迎來早晨時光。</p>
+                            <p class="">每日 100 元起，就能省下 30～60 分鐘的時間，輕鬆迎來早晨時光。</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-6 mb-4 mb-md-0">
                     <div class="d-flex">
-                        <div class="mr-3" style="font-size:70px;">
+                        <div class="mr-3" style="font-size:50px;">
                             <i class="far fa-user-circle"></i>
                         </div>
-                        <div>
+                        <div class="pt-3">
                             <h4>專業配送</h4>
-                            <p>只要一通電話，每日清晨 7:00 前將新鮮、營養、美味送到家，
+                            <p>只要一通電話，每日清晨 7：00 前將新鮮、營養、美味送到家，
                                口味和配送日期任您調整。
                             </p>
                         </div>
@@ -109,12 +108,12 @@
             <div class="row mt-md-5">
                 <div class="col-12 col-md-6 mb-4 mb-md-0">
                     <div class="d-flex">
-                        <div class="mr-3" style="font-size:70px;">
+                        <div class="mr-3" style="font-size:50px;">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                    <div>
+                    <div class="pt-3">
                         <h4>安心有保障</h4>
-                        <p>採用原料都是通過以下認證，可安心食用。</p>
+                        <p>採用的食材由知名主廚 Kojiro Shinomiya 和以下認證把關，美味餐點讓您安心享用。</p>
                         <ul>
                             <li>104 年 TQF 認證</li>
                             <li>HACCP 標章</li>
@@ -125,15 +124,15 @@
                 </div>
                 <div class="col-12 col-md-6 mb-4 mb-md-0">
                     <div class="d-flex">
-                        <div class="mr-3" style="font-size:70px;">
+                        <div class="mr-3" style="font-size:50px;">
                             <i class="fas fa-utensils"></i>
                         </div>
-                        <div>
+                        <div class="pt-3">
                             <h4>新鮮不外露</h4>
                             <p>免費提供保溫盒，訂戶不用等候開門。</p>
-                            <small class="text-danger">注意事項 :</small>
+                            <small class="text-danger">注意事項：</small>
                             <small>
-                                為保產品新鮮，開封後請盡速食用；若一時之間無法食用完畢，請放至冰箱冷藏；但冷藏兩小時內 (即早上九點前) 仍須食用完畢，以免產品變質。
+                                為保產品新鮮，開封後請盡速食用；若一時之間無法食用完畢，請放至冰箱冷藏；但冷藏兩小時內（即早上九點前）仍須食用完畢，以免產品變質。
                             </small>
                         </div>
                     </div>
@@ -144,10 +143,10 @@
 
 <!-- 討論區 -->
 
-    <section class="bg-match text-white py-5">
+    <section class="text-main py-5 position-relative">
         <div class="container">
-            <h3 class="text-center mb-5">來看看大家怎麼說 !</h3>
-                <div id="carouselExampleControls" class="carousel slide carousel-fade"
+            <h3 class="text-center mb-4 font-weight-bold">來看看大家怎麼說！</h3>
+                <div id="carouselExampleControls" class="carousel slide carousel-fade pb-1"
                      data-ride="carousel" data-interval="2000">
                     <div class="carousel-inner">
                     <div class="carousel-item active">
@@ -160,7 +159,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Tony Ooki</h5>
                                         <p class="section3_comment_text_overflow">
-                                            我家離超商好遠 QQ，有訂有輕鬆到 !
+                                            我家離超商好遠 ＱＱ，有訂有輕鬆到！
                                         </p>
                                     </div>
                                 </div>
@@ -190,7 +189,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Sakura Mana</h5>
                                         <p class="section3_comment_text_overflow">
-                                            咖啡品質不錯 !
+                                            咖啡品質不錯！
                                         </p>
                                     </div>
                                 </div>
@@ -208,7 +207,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Otsuki Hibiki</h5>
                                         <p class="section3_comment_text_overflow">
-                                            對忙碌的我來說真是幫我省下時間 ! 推~
+                                            對忙碌的我來說真是幫我省下時間！推～
                                         </p>
                                     </div>
                                 </div>
@@ -223,7 +222,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Yua Mikami</h5>
                                         <p class="section3_comment_text_overflow">
-                                            買早餐的時間算進去，直接省 2 小時 !
+                                            買早餐的時間算起來，直接省２小時！
                                         </p>
                                     </div>
                                 </div>
@@ -238,7 +237,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Kaori Maeda</h5>
                                         <p class="section3_comment_text_overflow">
-                                            期待新菜單^Q^
+                                            期待新菜單：）
                                         </p>
                                     </div>
                                 </div>
@@ -256,7 +255,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Hatano Yui</h5>
                                         <p class="section3_comment_text_overflow">
-                                            才付 120 元就能一早就有咖啡喝，又能省了我 1 小時多的時間，不用人擠人，不用急著出門，CP 值真是好 !
+                                            付200元，既能吃的美味還省時，cp值真是好！
                                         </p>
                                     </div>
                                 </div>
@@ -271,7 +270,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Yua Mikami</h5>
                                         <p class="section3_comment_text_overflow">
-                                            對於忙到半夜 2 點的我，累到早上不想買早餐，但又怕餓，訂下去後一試成主顧 !
+                                            對於忙到半夜2點，累到不想早起的我，很推薦！
                                         </p>
                                     </div>
                                 </div>
@@ -286,7 +285,7 @@
                                         role="alert">
                                         <h5 class="mt-0">Aoi Sora</h5>
                                         <p class="section3_comment_text_overflow">
-                                            推拿鐵，好喝!!
+                                            推拿鐵，好喝！！
                                         </p>
                                     </div>
                                 </div>
@@ -306,18 +305,25 @@
                     <!-- <span class="sr-only">Next</span> -->
                     </a>
                 </div>
-        <!-- 訂閱 -->
-    <h3 class="text-center mb-4 border-top border-white pt-3 mt-3">即將出新菜單，趕快來訂閱吧 !</h3>
+                <div>
+                <router-link to="/product_list" href="#"
+                    class="btn btn-danger btn-lg text-center position-absolute px-4 py-2
+                        section3_comment_btn">
+                        前往菜單
+                    <i class="fas fa-arrow-right"></i>
+                </router-link>
+            </div>
+        </div>
+    </section>
+    <!-- 訂閱 -->
+    <section class="bg-match text-white py-5">
+        <div class="container">
+            <h3 class="text-center mt-3 mb-4 font-weight-bold">
+        即將出新菜單，趕快來訂閱吧 !
+    </h3>
         <div class="form-row align-items-center justify-content-center">
-            <div class="col-12 col-md-8 mr-md-1 mb-4 mb-md-0">
-                <label class="sr-only" for="email">Email</label>
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text bg-white px-4"
-                        :class="{'border-right-0 border-danger': errors.first('email')}"
-                        >Email
-                    </div>
-                    </div>
+            <div class="col-12 col-md-8">
+                <div class="input-group">
                     <input type="email" name="email" class="form-control py-2"
                         id="email"
                         placeholder="輸入 Email ，按下訂閱獲取新菜單"
@@ -334,17 +340,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-auto">
-                <router-link to="/product_list" href="#" class="btn btn-danger btn-block mb-2 px-4">
-                    前往菜單
-                    <i class="fas fa-arrow-right"></i>
-                </router-link>
             </div>
-            <span class="text-danger" v-if="errors.has('email')">
+                <div class="text-danger pt-2 text-center" v-if="errors.has('email')">
                 {{errors.first('email')}}
-            </span>
+            </div>
         </div>
-    </div>
     </section>
   </div>
 </template>
@@ -365,7 +365,7 @@ export default {
     },
     subscription() {
       const vm = this;
-      this.$validator.validate().then((valid) => {
+      vm.$validator.validate().then((valid) => {
         if (!valid) {
           vm.$bus.$emit('message:push', '請輸入 Email', 'danger');
         } else {
@@ -380,14 +380,16 @@ export default {
 <style lang="scss" scoped>
 .header_bg_home {
     background-image: url(https://images.unsplash.com/photo-1558584724-0e4d32ca55a4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1402&q=80);
-    min-height: calc(100vh - 66px);
+    // min-height: calc(100vh - 66px);
+    height: 510px;
     background-blend-mode:multiply;
     background-color: rgb(109, 109, 109);
 }
 
 .home_arrow_animation {
     position: absolute;
-    left: 27px;
+    left: 50%;
+    transform: translateX(-50%);
     animation-name:arrow;
     animation-duration:2s;
     animation-iteration-count:infinite;
@@ -395,10 +397,10 @@ export default {
 
 @keyframes arrow {
     from {
-        top:10px;
+        top:30px;
     }
     to{
-        top:40px;
+        top:60px;
         color: transparent;
     }
 }
@@ -422,13 +424,18 @@ export default {
 }
 
 .section3_comment_dialog {
-    border-radius:50%;
     width:64px;
     height:64px;
 }
 
 .section3_comment_alert-radius {
-    border-radius:40px;
+    border-radius:20px;
+}
+
+.section3_comment_btn {
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 </style>
 

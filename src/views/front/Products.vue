@@ -24,18 +24,22 @@
           <div class="row">
             <div class="col-12 col-md-6 col-lg-4 mb-4"
                  v-for="item in filteredData" :key="item.id">
-                <div class="bg-cover-c products-img-h border-t-radius-5"
+                <a href="#" class="d-block text-decoration-none border-radius-5"
+                  :class="{ 'products-is_enabled-f': !item.is_enabled,
+                            'products-is_enabled-t': item.is_enabled }"
+                  @click.prevent="moreContent(item.id, item.is_enabled)">
+                  <div class="bg-cover-c products-img-h border-t-radius-5"
                      :style="{backgroundImage: `url(${item.imageUrl})`}">
-                </div>
+                  </div>
                   <div class="products-favorite">
                     <a href="#">
                       <i class="fas fa-heart fa-lg text-danger"
-                        @click.prevent="removeFavorite(item)"
+                        @click.prevent.stop="removeFavorite(item)"
                         v-if="getFilteredFavorite(item)">
                         </i>
 
                       <i class="far fa-heart fa-lg text-danger"
-                        @click.prevent="addFavorite(item)"
+                        @click.prevent.stop="addFavorite(item)"
                         v-else>
                         </i>
                     </a>
@@ -44,13 +48,13 @@
                     <h5 class="border-bottom border-white pb-1 text-center text-md-left">
                       {{ item.title }}
                     </h5>
-                      <div class="d-flex justify-content-end align-items-end pb-1">
+                  <div class="d-flex justify-content-end align-items-end pb-1">
                         <del>${{ item.origin_price }}</del>
                         <h5 class="ml-auto mb-0 text-danger">特價 ${{ item.price }}</h5>
-                      </div>
+                  </div>
                         <a href="#"
                           class="btn btn-main border-white btn-sm btn-block"
-                          @click.prevent="moreContent(item.id)"
+                          @click.prevent.stop="moreContent(item.id)"
                           v-if="item.is_enabled">
                           查看更多
                         </a>
@@ -59,14 +63,15 @@
                           Coming Soon !
                         </a>
                         <a href="#" class="btn btn-danger btn-sm btn-block"
-                         @click.prevent="addtoCart(item.id)"
+                         @click.prevent.stop="addtoCart(item.id)"
                          v-if="item.is_enabled">加入購物車</a>
                         <a href="#" v-else class="btn btn-danger btn-sm btn-block disabled">
                           Sold Out !
-                          </a>
-                  </div>
+                        </a>
+                    </div>
+                </a>
                 </div>
-            </div>
+              </div>
           </div>
         </div>
       </div>
@@ -103,8 +108,8 @@ export default {
     getProducts() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/products/all`;
-      this.isLoading = true;
-      this.$http.get(api).then((response) => {
+      vm.isLoading = true;
+      vm.$http.get(api).then((response) => {
         vm.isLoading = false;
         vm.products = response.data.products;
         vm.pagination = response.data.pagination;
@@ -117,19 +122,15 @@ export default {
         product_id: id,
         qty,
       };
-      this.$http.post(api, { data: cart }).then(() => {
+      vm.$http.post(api, { data: cart }).then(() => {
         vm.$bus.$emit('getCart');
         vm.$bus.$emit('message:push', '已加入購物車', 'success');
       });
     },
-    getCart() {
-      const vm = this;
-      const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/cart`;
-      this.$http.get(api).then((response) => {
-        vm.cart = response.data.data;
-      });
-    },
-    moreContent(productId) {
+    moreContent(productId, isEnabled) {
+      if (isEnabled === 0) {
+        return;
+      }
       this.$router.push(`/product_list/${productId}`);
     },
     getFavoriteData() {
@@ -141,9 +142,9 @@ export default {
         id: item.id,
         title: item.title,
       };
-      this.favoriteData.push(favoriteItem);
+      vm.favoriteData.push(favoriteItem);
       localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
-      this.$bus.$emit('favoriteData');
+      vm.$bus.$emit('favoriteData');
       vm.$bus.$emit('message:push', '已加入我的最愛', 'success');
     },
     getFilteredFavorite(item) {
@@ -154,13 +155,13 @@ export default {
     },
     removeFavorite(item) {
       const vm = this;
-      const num = this.favoriteData.findIndex((el) => {
+      const num = vm.favoriteData.findIndex((el) => {
         const result = el.id === item.id;
         return result;
       });
-      this.favoriteData.splice(num, 1);
+      vm.favoriteData.splice(num, 1);
       localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
-      this.$bus.$emit('favoriteData');
+      vm.$bus.$emit('favoriteData');
       vm.$bus.$emit('message:push', '已從我的最愛中刪除', 'danger');
     },
     getCategory() {
@@ -171,24 +172,23 @@ export default {
   },
   mounted() {
     const vm = this;
-    this.$bus.$on('removeFavorite', this.removeFavorite);
-    this.$bus.$on('removeAllFavorite', (data) => {
-      this.favoriteData = data;
+    vm.$bus.$on('favoriteData', vm.getFavoriteData);
+    vm.$bus.$on('removeAllFavorite', (data) => {
+      vm.favoriteData = data;
       localStorage.setItem('favoriteData', JSON.stringify(vm.favoriteData));
     });
   },
   computed: {
     filteredData() {
       const vm = this;
-      if (this.select === '全部菜單') {
-        return this.products;
+      if (vm.select === '全部菜單') {
+        return vm.products;
       }
-      return this.products.filter(item => item.category === vm.select);
+      return vm.products.filter(item => item.category === vm.select);
     },
   },
   created() {
     this.getProducts();
-    this.getCart();
     this.getFavoriteData();
     this.getCategory();
   },
@@ -204,5 +204,14 @@ export default {
     position: absolute;
     top: 12px;
     right: 30px;
+}
+
+.products-is_enabled-f {
+    cursor: default;
+}
+
+.products-is_enabled-t:hover {
+    box-shadow: 0 1px 10px #000;
+    transition: all .3s;
 }
 </style>

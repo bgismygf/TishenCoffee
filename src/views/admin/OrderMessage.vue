@@ -78,8 +78,8 @@ export default {
       const vm = this;
       let dataOrder = {};
       const api = `${process.env.APIPATH}/api/${process.env.ZACPATH}/admin/orders?page=${page}`;
-      this.isLoading = true;
-      this.$http.get(api).then((response) => {
+      vm.isLoading = true;
+      vm.$http.get(api).then((response) => {
         vm.isLoading = false;
         dataOrder = response.data.orders;
         vm.pagination = response.data.pagination;

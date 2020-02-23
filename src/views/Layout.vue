@@ -20,10 +20,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-homenavbg {
-  background: rgba(13, 15, 19, 0.719);
-  position: absolute;
-}
-</style>

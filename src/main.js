@@ -35,8 +35,7 @@ Vue.filter('date', dateFilter);
 
 Vue.component('Loading', Loading);
 
-/* eslint-disable no-new */
-new Vue({
+export default new Vue({
   el: '#app',
   router,
   components: { App },
@@ -58,4 +57,8 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
+
+router.afterEach(() => {
+  window.scrollTo(0, 0);
 });
